@@ -14,7 +14,7 @@ class ProductController extends AbstractController
     {        
     }
 
-    #[Route('/product', name: 'product')]
+    #[Route('/product', name: 'product_index')]
     public function index(): Response
     {
         return $this->render('product/index.html.twig', [
@@ -24,7 +24,7 @@ class ProductController extends AbstractController
     // Ahora debemos de definir las sentencias de CRUD para conectar con el Model (basicamente ahora mismo solo es la Entity pero también podran ser los Repositories que se conecten)
     
     // Create One
-    #[Route('/product', name: 'create_one_product')]
+    #[Route('/product', name: 'product_create', methods: ['POST', 'GET'])]
     public function create(): Response
     {
         $product = new Product ();
@@ -34,16 +34,38 @@ class ProductController extends AbstractController
         $this->entityManager->persist($product);
         $this->entityManager->flush();
 
-        return $this->redirectToRoute('product');
+        return $this->redirectToRoute('product_index');
     }
     // Select All
-    #[Route('/product', name: 'create_one_product')]
+    #[Route('/product', name: 'product_get_all')]
     public function getAllUsers(): Response
     {
-        $users = $this->entityManager->getRepository(Product::class)->findAll();
-    }
+        $products = $this->entityManager
+            ->getRepository(Product::class)
+            ->findAll();
+        
+        return $this->render('product/index.html.twig',
+         ['products' => $products]
+        );
+    }   
 
-    // Select One
+    // Select One Product By ID
+    #[Route('/product/{id}', name:'product_getByID', methods: ['POST'])]
+    public function getOneByID($id)
+    {
+        $product = $this->entityManager
+            ->getRepository(Product::class)
+            ->find($id);
+
+        if (!$product) 
+        {
+            throw $this->createNotFoundException('Product with ID - ['.$id.'] - NOT FOUND');
+        }
+
+        return $this->render('product/fichaProducto.html.twig',
+        ['product' => $product]);
+    }
+    
 
     // Delete One 
 
