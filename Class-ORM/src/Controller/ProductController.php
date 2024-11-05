@@ -7,13 +7,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Product;
+use App\Repository\ProductRepository;
 
 class ProductController extends AbstractController
 {
     public function __construct(private readonly EntityManagerInterface $entityManager)
     {        
     }
-
     #[Route('/product', name: 'product_index')]
     public function index(): Response
     {
@@ -24,18 +24,22 @@ class ProductController extends AbstractController
     // Ahora debemos de definir las sentencias de CRUD para conectar con el Model (basicamente ahora mismo solo es la Entity pero también podran ser los Repositories que se conecten)
     
     // Create One
-    #[Route('/product', name: 'product_create', methods: ['POST', 'GET'])]
+    #[Route('/product/create', name: 'product_create', methods: ['POST', 'GET'])]
     public function create(): Response
     {
-        $product = new Product ();
-        $product->setName('Nombre');
-        $product->setPrice(100);
+            $product = new Product ();
+            $product->setName('Nombre');
+            $product->setPrice(100);
+    
+            $this->entityManager->persist($product);
+            $this->entityManager->flush();
 
-        $this->entityManager->persist($product);
-        $this->entityManager->flush();
+            $arrResult = $product->toArray();
 
-        return $this->redirectToRoute('createSucess.html.twig');
+            return $this->render('product/createSucess.html.twig', 
+            ['product' => $arrResult]);
     }
+    
     // Select All
     #[Route('/product', name: 'product_select_all')]
     public function getAllUsers(): Response
@@ -64,6 +68,7 @@ class ProductController extends AbstractController
         return $this->render('product/fichaProducto.html.twig',
         ['product' => $product]);
     }
+
     // Update One
     #[Route('/product/update/{id}', name: 'product_update_byID', methods: ['POST', 'PUT'])]
     public function updateByID($id): Response
@@ -86,7 +91,6 @@ class ProductController extends AbstractController
         return $this->render('updateSucess.html.twig', ['product'=> $product]);
 
     }
-
     // Delete One
     #[Route('product/delete/{id}', name:'product_delete_byID', methods: ['POST'])]
     public function deleteByID($id): Response
@@ -102,7 +106,6 @@ class ProductController extends AbstractController
 
         $this->entityManager->remove($product);
         $this->entityManager->flush();
-
 
         return $this->render('deleteSucess.html.twig');
     }

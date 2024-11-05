@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ProductController!
+{% block title %}Hello Create Sucess!
 {% endblock %}
 
 {% block body %}
@@ -18,16 +18,12 @@
 	</style>
 
 	<div class="example-wrapper">
-		<h1>Hello
-			{{ controller_name }}! ✅</h1>
-
-		This friendly message is coming from:
 		<ul>
-			<li>Your controller at
-				<code>/home/reboot-student/Desktop/CLASES/Class-PHP-ORM/Class-PHP-ORM/Class-ORM/src/Controller/ProductController.php</code>
+			<li>
+				{{product.name}}
 			</li>
-			<li>Your template at
-				<code>/home/reboot-student/Desktop/CLASES/Class-PHP-ORM/Class-PHP-ORM/Class-ORM/templates/product/index.html.twig</code>
+			<li>
+				{{product.price}}
 			</li>
 		</ul>
 	</div>
