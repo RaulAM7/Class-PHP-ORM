@@ -65,11 +65,34 @@ class ProductController extends AbstractController
         return $this->render('product/fichaProducto.html.twig',
         ['product' => $product]);
     }
+    // Update One
+    #[Route('/product/update/{id}', name:'product_updateByID', methods: ['POST', 'PUT'])]
+
+    public function updateByID($id): Response
+    {
+        $product = $this->entityManager
+            ->getRepository(Product::class)
+            ->find($id);
+
+        if (!$product) {
+            throw $this->createNotFoundException('Product with ID - [' . $id . '] - NOT FOUND');
+        }
+
+        $product->setName('Nombre');
+        $product->setPrice(100);
+        
+
+        $this->entityManager->persist($product);
+        $this->entityManager->flush();
+
+        return $this->render('updateSucess.html.twig', ['product'=> $product]);
+
+    }
+
+    // Delete One
+
     
 
-    // Delete One 
-
-    // Update One
 
 
 
