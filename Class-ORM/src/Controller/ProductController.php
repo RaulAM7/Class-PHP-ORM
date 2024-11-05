@@ -34,10 +34,10 @@ class ProductController extends AbstractController
         $this->entityManager->persist($product);
         $this->entityManager->flush();
 
-        return $this->redirectToRoute('product_index');
+        return $this->redirectToRoute('createSucess.html.twig');
     }
     // Select All
-    #[Route('/product', name: 'product_get_all')]
+    #[Route('/product', name: 'product_select_all')]
     public function getAllUsers(): Response
     {
         $products = $this->entityManager
@@ -48,9 +48,8 @@ class ProductController extends AbstractController
          ['products' => $products]
         );
     }   
-
     // Select One Product By ID
-    #[Route('/product/{id}', name:'product_getByID', methods: ['POST'])]
+    #[Route('/product/{id}', name:'product_select_byID', methods: ['GET'])]
     public function getOneByID($id)
     {
         $product = $this->entityManager
@@ -66,8 +65,7 @@ class ProductController extends AbstractController
         ['product' => $product]);
     }
     // Update One
-    #[Route('/product/update/{id}', name:'product_updateByID', methods: ['POST', 'PUT'])]
-
+    #[Route('/product/update/{id}', name: 'product_update_byID', methods: ['POST', 'PUT'])]
     public function updateByID($id): Response
     {
         $product = $this->entityManager
@@ -90,10 +88,22 @@ class ProductController extends AbstractController
     }
 
     // Delete One
+    #[Route('product/delete/{id}', name:'product_delete_byID', methods: ['POST'])]
+    public function deleteByID($id): Response
+    {
+        $product = $this->entityManager
+        ->getRepository(Product::class)
+        ->find($id);
 
-    
+        if (!$product)
+        {
+            throw $this->createNotFoundException('Product with ID - ['.$id.'] - NOT FOUND');
+        }
+
+        $this->entityManager->remove($product);
+        $this->entityManager->flush();
 
 
-
-
+        return $this->render('deleteSucess.html.twig');
+    }
 }
